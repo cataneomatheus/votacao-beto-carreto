@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quem vai ao Beto Carrero? 🎢</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🎢 Quem vai ao Beto Carrero?</h1>
+    <p class="subtitulo">Adicione seu nome e o tipo de ingresso. Todo mundo vê a mesma lista.</p>
+  </header>
+
+  <main>
+    <section class="card form-card">
+      <button id="btnAbrir" class="btn-add" type="button">+ Adicionar pessoa</button>
+
+      <form id="form" class="form" hidden>
+        <label>
+          Nome
+          <input id="nome" name="nome" type="text" maxlength="80" placeholder="Ex: Tia Maria" required />
+        </label>
+
+        <fieldset class="tipo-grupo">
+          <legend>Tipo de ingresso</legend>
+          <div class="tipo-opcoes">
+            <label class="tipo-opcao">
+              <input type="radio" name="tipo" value="adulto" checked />
+              <span>🎟️ Adulto</span>
+            </label>
+            <label class="tipo-opcao">
+              <input type="radio" name="tipo" value="estudante" />
+              <span>🎓 Estudante</span>
+            </label>
+            <label class="tipo-opcao">
+              <input type="radio" name="tipo" value="pcd" />
+              <span>♿ PCD</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="form-acoes">
+          <button type="submit" class="btn-primario">Adicionar</button>
+          <button type="button" id="btnCancelar" class="btn-secundario">Cancelar</button>
+        </div>
+        <p id="erro" class="erro" hidden></p>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="lista-cabecalho">
+        <h2>Lista de confirmados</h2>
+        <span id="contador" class="contador">0</span>
+      </div>
+      <ul id="lista" class="lista"></ul>
+      <p id="vazio" class="vazio">Ninguém na lista ainda. Seja o primeiro! 🎉</p>
+    </section>
+  </main>
+
+  <!-- Modal de confirmação (customizado, no lugar do confirm() do navegador) -->
+  <div id="modal" class="modal-overlay" hidden>
+    <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="modal-titulo">
+      <div class="modal-icone">🗑️</div>
+      <h3 id="modal-titulo" class="modal-titulo">Remover pessoa?</h3>
+      <p id="modal-texto" class="modal-texto"></p>
+      <div class="modal-acoes">
+        <button type="button" id="modal-cancelar" class="btn-secundario">Cancelar</button>
+        <button type="button" id="modal-confirmar" class="btn-perigo">Remover</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

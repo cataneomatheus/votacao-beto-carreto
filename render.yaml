@@ -1,0 +1,17 @@
+# Deploy no Render (plano free) com disco persistente para não perder os dados.
+# Passo a passo: crie o repo no GitHub, entre em render.com, "New +" ->
+# "Blueprint" e aponte para este repositório. O Render lê este arquivo.
+services:
+  - type: web
+    name: votacao-beto-carrero
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATA_DIR
+        value: /var/data
+    disk:
+      name: dados
+      mountPath: /var/data
+      sizeGB: 1
