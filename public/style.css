@@ -370,6 +370,30 @@ input[type="text"]:focus {
   font-weight: 600;
 }
 
+/* Estado de carregando */
+.carregando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 0;
+  color: var(--texto-fraco);
+  font-weight: 600;
+}
+
+.spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid #e6e0f0;
+  border-top-color: var(--roxo);
+  border-radius: 50%;
+  animation: girar 0.7s linear infinite;
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
 /* Modal de confirmação */
 .modal-overlay {
   position: fixed;

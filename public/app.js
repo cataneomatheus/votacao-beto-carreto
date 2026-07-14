@@ -5,6 +5,7 @@ const inputNome = document.getElementById("nome");
 const erroEl = document.getElementById("erro");
 const listaEl = document.getElementById("lista");
 const vazioEl = document.getElementById("vazio");
+const carregandoEl = document.getElementById("carregando");
 const contadorEl = document.getElementById("contador");
 const modalEl = document.getElementById("modal");
 const modalTextoEl = document.getElementById("modal-texto");
@@ -44,6 +45,7 @@ function render(pessoas, idNovo) {
     contadorEl.classList.add("pulsa");
   }
   contadorEl.textContent = String(total);
+  carregandoEl.hidden = true;
   vazioEl.hidden = total > 0;
   listaEl.innerHTML = "";
 
@@ -79,11 +81,18 @@ function render(pessoas, idNovo) {
 }
 
 async function carregar(idNovo) {
+  // só mostra o spinner na carga inicial (lista ainda vazia), evitando
+  // um "piscar" quando recarregamos após adicionar/remover
+  if (listaEl.children.length === 0) {
+    vazioEl.hidden = true;
+    carregandoEl.hidden = false;
+  }
   try {
     const res = await fetch("/api/pessoas");
     if (!res.ok) throw new Error();
     render(await res.json(), idNovo);
   } catch {
+    carregandoEl.hidden = true;
     mostrarErro("Não consegui carregar a lista. Tente recarregar a página.");
   }
 }
