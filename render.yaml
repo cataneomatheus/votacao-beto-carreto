@@ -1,6 +1,8 @@
-# Deploy no Render (plano free) com disco persistente para não perder os dados.
+# Deploy no Render (plano free). A persistência fica no Turso (SQLite na nuvem),
+# então NÃO precisamos de disco no Render.
 # Passo a passo: crie o repo no GitHub, entre em render.com, "New +" ->
-# "Blueprint" e aponte para este repositório. O Render lê este arquivo.
+# "Blueprint" e aponte para este repositório. Depois preencha as variáveis
+# TURSO_DATABASE_URL e TURSO_AUTH_TOKEN no painel (valores do painel do Turso).
 services:
   - type: web
     name: votacao-beto-carrero
@@ -9,9 +11,7 @@ services:
     buildCommand: npm install
     startCommand: npm start
     envVars:
-      - key: DATA_DIR
-        value: /var/data
-    disk:
-      name: dados
-      mountPath: /var/data
-      sizeGB: 1
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false

@@ -3,46 +3,34 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
+import { createClient } from "@libsql/client";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const PORT = process.env.PORT || 3000;
-// DATA_DIR permite apontar para um disco persistente no host (ex: Render/Fly).
-// Se não definido, usa a pasta ./data local.
-const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
-const DATA_FILE = path.join(DATA_DIR, "data.json");
-
 const TIPOS_VALIDOS = ["adulto", "estudante", "pcd"];
 
-// --- Armazenamento em arquivo JSON -----------------------------------------
+// --- Banco (Turso / libSQL) -------------------------------------------------
+// Em produção: defina TURSO_DATABASE_URL e TURSO_AUTH_TOKEN (do painel do Turso).
+// Sem essas variáveis (dev local), usa um arquivo SQLite em ./data/local.db.
+let url = process.env.TURSO_DATABASE_URL;
+const authToken = process.env.TURSO_AUTH_TOKEN;
 
-function garantirArquivo() {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify({ pessoas: [] }, null, 2));
-  }
+if (!url) {
+  fs.mkdirSync(path.join(__dirname, "data"), { recursive: true });
+  url = "file:" + path.join(__dirname, "data", "local.db");
 }
 
-function lerDados() {
-  garantirArquivo();
-  try {
-    const raw = fs.readFileSync(DATA_FILE, "utf8");
-    const dados = JSON.parse(raw);
-    if (!Array.isArray(dados.pessoas)) dados.pessoas = [];
-    return dados;
-  } catch {
-    return { pessoas: [] };
-  }
-}
+const db = createClient({ url, authToken });
 
-// Escrita atômica: grava num arquivo temporário e renomeia, evitando corromper
-// o JSON se o processo cair no meio de uma escrita.
-function salvarDados(dados) {
-  garantirArquivo();
-  const tmp = DATA_FILE + ".tmp";
-  fs.writeFileSync(tmp, JSON.stringify(dados, null, 2));
-  fs.renameSync(tmp, DATA_FILE);
-}
+await db.execute(`
+  CREATE TABLE IF NOT EXISTS pessoas (
+    id TEXT PRIMARY KEY,
+    nome TEXT NOT NULL,
+    tipo TEXT NOT NULL,
+    criado_em TEXT NOT NULL
+  )
+`);
 
 // --- App --------------------------------------------------------------------
 
@@ -50,18 +38,24 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/api/pessoas", (req, res) => {
-  const { pessoas } = lerDados();
-  res.json(pessoas);
+function paraJson(row) {
+  return { id: row.id, nome: row.nome, tipo: row.tipo, criadoEm: row.criado_em };
+}
+
+app.get("/api/pessoas", async (req, res) => {
+  try {
+    const rs = await db.execute("SELECT * FROM pessoas ORDER BY criado_em ASC");
+    res.json(rs.rows.map(paraJson));
+  } catch {
+    res.status(500).json({ erro: "Erro ao ler a lista." });
+  }
 });
 
-app.post("/api/pessoas", (req, res) => {
+app.post("/api/pessoas", async (req, res) => {
   const nome = String(req.body?.nome ?? "").trim();
   const tipo = String(req.body?.tipo ?? "").trim().toLowerCase();
 
-  if (!nome) {
-    return res.status(400).json({ erro: "Informe o nome." });
-  }
+  if (!nome) return res.status(400).json({ erro: "Informe o nome." });
   if (nome.length > 80) {
     return res.status(400).json({ erro: "Nome muito longo (máx. 80 caracteres)." });
   }
@@ -69,32 +63,40 @@ app.post("/api/pessoas", (req, res) => {
     return res.status(400).json({ erro: "Tipo de ingresso inválido." });
   }
 
-  const dados = lerDados();
   const pessoa = {
     id: crypto.randomUUID(),
     nome,
     tipo,
     criadoEm: new Date().toISOString(),
   };
-  dados.pessoas.push(pessoa);
-  salvarDados(dados);
 
-  res.status(201).json(pessoa);
+  try {
+    await db.execute({
+      sql: "INSERT INTO pessoas (id, nome, tipo, criado_em) VALUES (?, ?, ?, ?)",
+      args: [pessoa.id, pessoa.nome, pessoa.tipo, pessoa.criadoEm],
+    });
+    res.status(201).json(pessoa);
+  } catch {
+    res.status(500).json({ erro: "Erro ao salvar." });
+  }
 });
 
-app.delete("/api/pessoas/:id", (req, res) => {
-  const dados = lerDados();
-  const antes = dados.pessoas.length;
-  dados.pessoas = dados.pessoas.filter((p) => p.id !== req.params.id);
-
-  if (dados.pessoas.length === antes) {
-    return res.status(404).json({ erro: "Pessoa não encontrada." });
+app.delete("/api/pessoas/:id", async (req, res) => {
+  try {
+    const rs = await db.execute({
+      sql: "DELETE FROM pessoas WHERE id = ?",
+      args: [req.params.id],
+    });
+    if (rs.rowsAffected === 0) {
+      return res.status(404).json({ erro: "Pessoa não encontrada." });
+    }
+    res.status(204).end();
+  } catch {
+    res.status(500).json({ erro: "Erro ao remover." });
   }
-  salvarDados(dados);
-  res.status(204).end();
 });
 
 app.listen(PORT, () => {
   console.log(`Beto Carrero rodando em http://localhost:${PORT}`);
-  console.log(`Dados em: ${DATA_FILE}`);
+  console.log(`Banco: ${url.startsWith("file:") ? url : "Turso (remoto)"}`);
 });
