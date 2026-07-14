@@ -11,12 +11,32 @@ const modalEl = document.getElementById("modal");
 const modalTextoEl = document.getElementById("modal-texto");
 const modalCancelarEl = document.getElementById("modal-cancelar");
 const modalConfirmarEl = document.getElementById("modal-confirmar");
+const contTotalEl = document.getElementById("contTotal");
+const contAdultoEl = document.getElementById("contAdulto");
+const contEstudanteEl = document.getElementById("contEstudante");
+const contPcdEl = document.getElementById("contPcd");
 
 const ROTULOS = {
   adulto: "Adulto",
   estudante: "Estudante",
   pcd: "PCD",
 };
+
+const EMOJIS = {
+  adulto: "🎟️",
+  estudante: "🎓",
+  pcd: "♿",
+};
+
+// Atualiza um contador e faz "pulsar" se o número mudou.
+function setContador(el, valor) {
+  if (el.textContent !== String(valor)) {
+    el.classList.remove("pulsa");
+    void el.offsetWidth; // reinicia a animação
+    el.classList.add("pulsa");
+  }
+  el.textContent = String(valor);
+}
 
 function mostrarErro(msg) {
   erroEl.textContent = msg;
@@ -39,12 +59,17 @@ function fecharForm() {
 // Renderiza a lista. `idNovo` (opcional) recebe a animação de entrada.
 function render(pessoas, idNovo) {
   const total = pessoas.length;
-  if (contadorEl.textContent !== String(total)) {
-    contadorEl.classList.remove("pulsa");
-    void contadorEl.offsetWidth; // reinicia a animação
-    contadorEl.classList.add("pulsa");
+  const porTipo = { adulto: 0, estudante: 0, pcd: 0 };
+  for (const p of pessoas) {
+    if (porTipo[p.tipo] !== undefined) porTipo[p.tipo]++;
   }
+
   contadorEl.textContent = String(total);
+  setContador(contTotalEl, total);
+  setContador(contAdultoEl, porTipo.adulto);
+  setContador(contEstudanteEl, porTipo.estudante);
+  setContador(contPcdEl, porTipo.pcd);
+
   carregandoEl.hidden = true;
   vazioEl.hidden = total > 0;
   listaEl.innerHTML = "";
@@ -53,6 +78,11 @@ function render(pessoas, idNovo) {
     const li = document.createElement("li");
     li.className = "item";
     if (p.id === idNovo) li.classList.add("novo");
+
+    const emoji = document.createElement("span");
+    emoji.className = "item-emoji";
+    emoji.setAttribute("aria-hidden", "true");
+    emoji.textContent = EMOJIS[p.tipo] ?? "🎫";
 
     const info = document.createElement("div");
     info.className = "item-info";
@@ -75,7 +105,7 @@ function render(pessoas, idNovo) {
     btnRemover.textContent = "✕";
     btnRemover.addEventListener("click", () => remover(li, p.id, p.nome));
 
-    li.append(info, btnRemover);
+    li.append(emoji, info, btnRemover);
     listaEl.append(li);
   }
 }

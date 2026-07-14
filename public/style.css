@@ -1,20 +1,23 @@
-/* Mobile-first: base pensada para celular; refinamentos de tela grande no
-   @media lá no fim. Tema: parque de diversões, colorido e divertido. */
+/* Mobile-first, tema parque de diversões: cores vivas, fonte arredondada,
+   brinquedos flutuando no fundo. Refinamentos de tela grande no @media. */
 
 :root {
-  --roxo: #6d28d9;
+  --roxo: #7c3aed;
+  --roxo-escuro: #5b21b6;
   --rosa: #ec4899;
-  --laranja: #f97316;
-  --amarelo: #facc15;
+  --laranja: #fb7185;
+  --laranja2: #f97316;
+  --amarelo: #fbbf24;
   --azul: #2563eb;
-  --verde: #16a34a;
+  --azul-claro: #38bdf8;
+  --verde: #22c55e;
   --vermelho: #ef4444;
-  --texto: #1e1b2e;
-  --texto-fraco: #6b6480;
+  --texto: #2a1a4a;
+  --texto-fraco: #7c718f;
   --branco: #ffffff;
-  --raio: 18px;
-  --sombra: 0 8px 24px rgba(76, 29, 149, 0.12);
-  --sombra-forte: 0 12px 30px rgba(76, 29, 149, 0.22);
+  --raio: 22px;
+  --sombra: 0 10px 30px rgba(76, 29, 149, 0.16);
+  --sombra-forte: 0 16px 40px rgba(76, 29, 149, 0.28);
 }
 
 * {
@@ -33,63 +36,151 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Fredoka", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--texto);
-  line-height: 1.45;
-  background: linear-gradient(160deg, #7c3aed 0%, #db2777 55%, #f97316 100%);
+  line-height: 1.5;
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #a78bfa 0%, transparent 60%),
+    linear-gradient(165deg, #7c3aed 0%, #db2777 48%, #fb923c 100%);
   background-attachment: fixed;
+  overflow-x: hidden;
   padding: env(safe-area-inset-top) env(safe-area-inset-right)
     env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
+/* Brinquedos flutuando ao fundo */
+.ceu {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.brinquedo {
+  position: absolute;
+  font-size: 2.4rem;
+  opacity: 0.22;
+  animation: flutua 7s ease-in-out infinite;
+}
+
+.brinquedo.r1 { top: 12%; left: 8%; animation-delay: 0s; }
+.brinquedo.r2 { top: 26%; right: 9%; animation-delay: 1.2s; font-size: 3rem; }
+.brinquedo.r3 { bottom: 22%; left: 12%; animation-delay: 2.1s; }
+.brinquedo.r4 { bottom: 12%; right: 14%; animation-delay: 0.6s; }
+.brinquedo.r5 { top: 46%; left: 46%; animation-delay: 1.8s; }
+
+@keyframes flutua {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-16px) rotate(4deg); }
+}
+
 header {
+  position: relative;
+  z-index: 1;
   text-align: center;
-  padding: 28px 16px 10px;
+  padding: 32px 20px 8px;
   color: var(--branco);
 }
 
 header h1 {
-  font-size: 1.7rem;
-  margin: 0 0 6px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  animation: balanca 4s ease-in-out infinite;
+  font-size: 1.85rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 10px;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);
 }
 
-@keyframes balanca {
-  0%, 100% { transform: rotate(-1.5deg); }
-  50% { transform: rotate(1.5deg); }
+header h1 .destaque {
+  color: var(--amarelo);
+  white-space: nowrap;
 }
 
 .subtitulo {
-  margin: 0;
-  font-size: 0.95rem;
-  opacity: 0.95;
+  margin: 0 auto;
+  max-width: 30ch;
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.96;
 }
 
 main {
-  max-width: 640px;
+  position: relative;
+  z-index: 1;
+  max-width: 620px;
   margin: 0 auto;
-  padding: 12px 16px 48px;
+  padding: 18px 18px 56px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .card {
   background: var(--branco);
   border-radius: var(--raio);
   box-shadow: var(--sombra);
-  padding: 18px;
+  padding: 22px;
 }
 
-/* Botões — alvos de toque confortáveis (>= 48px) */
+/* --- Painel de contadores por tipo ---------------------------------------- */
+.placar {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.stat {
+  background: var(--branco);
+  border-radius: 18px;
+  padding: 16px 12px;
+  text-align: center;
+  box-shadow: var(--sombra);
+  border-top: 5px solid var(--roxo);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: transform 0.15s ease;
+}
+
+.stat-icone {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.stat-num {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--texto);
+}
+
+.stat-num.pulsa {
+  animation: pulsa 0.45s ease;
+}
+
+.stat-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--texto-fraco);
+}
+
+.stat-total { border-top-color: var(--roxo); }
+.stat-adulto { border-top-color: var(--azul); }
+.stat-estudante { border-top-color: var(--verde); }
+.stat-pcd { border-top-color: var(--laranja2); }
+
+/* --- Botões --------------------------------------------------------------- */
 button {
   font: inherit;
   cursor: pointer;
   border: none;
-  border-radius: 12px;
-  min-height: 48px;
-  padding: 0 18px;
+  border-radius: 14px;
+  min-height: 52px;
+  padding: 0 20px;
+  font-weight: 600;
   transition: transform 0.08s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
 
@@ -99,11 +190,11 @@ button:active {
 
 .btn-add {
   width: 100%;
-  background: linear-gradient(135deg, var(--laranja), var(--rosa));
+  background: linear-gradient(135deg, var(--laranja2), var(--rosa));
   color: var(--branco);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  box-shadow: 0 6px 16px rgba(236, 72, 153, 0.35);
+  box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4);
 }
 
 .btn-add:hover {
@@ -114,8 +205,8 @@ button:active {
 .form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-top: 4px;
+  gap: 18px;
+  margin-top: 16px;
   animation: surge 0.25s ease;
 }
 
@@ -124,31 +215,36 @@ button:active {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.form label {
+.campo {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-weight: 700;
-  font-size: 0.95rem;
+  gap: 8px;
+}
+
+.campo-titulo,
+.tipo-grupo legend {
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 input[type="text"] {
   font: inherit;
   /* 16px evita o zoom automático do iOS ao focar o campo */
   font-size: 16px;
-  padding: 13px 14px;
-  border: 2px solid #e6e0f0;
-  border-radius: 12px;
-  background: var(--branco);
+  padding: 14px 16px;
+  border: 2px solid #ece6f7;
+  border-radius: 14px;
+  background: #faf8ff;
   color: var(--texto);
   width: 100%;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 input[type="text"]:focus {
   outline: none;
   border-color: var(--roxo);
-  box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.12);
+  background: var(--branco);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.14);
 }
 
 /* Seletor de tipo de ingresso (pílulas) */
@@ -159,20 +255,14 @@ input[type="text"]:focus {
 }
 
 .tipo-grupo legend {
-  font-weight: 700;
-  font-size: 0.95rem;
   padding: 0;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .tipo-opcoes {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.tipo-opcao {
-  position: relative;
+  gap: 10px;
 }
 
 .tipo-opcao input {
@@ -186,23 +276,24 @@ input[type="text"]:focus {
   align-items: center;
   justify-content: center;
   text-align: center;
-  min-height: 48px;
-  padding: 6px 4px;
-  border: 2px solid #e6e0f0;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 0.9rem;
+  min-height: 52px;
+  padding: 8px 4px;
+  border: 2px solid #ece6f7;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 0.92rem;
   color: var(--texto-fraco);
-  background: var(--branco);
+  background: #faf8ff;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .tipo-opcao input:checked + span {
   border-color: var(--roxo);
-  color: var(--roxo);
-  background: #f3ecff;
-  box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.12);
+  color: var(--roxo-escuro);
+  background: #f1e9ff;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.14);
+  transform: translateY(-1px);
 }
 
 .tipo-opcao input:focus-visible + span {
@@ -212,7 +303,7 @@ input[type="text"]:focus {
 
 .form-acoes {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .btn-primario {
@@ -230,46 +321,37 @@ input[type="text"]:focus {
 
 .erro {
   color: var(--vermelho);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 600;
   margin: 0;
 }
 
+/* --- Lista ---------------------------------------------------------------- */
 .lista-cabecalho {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .lista-cabecalho h2 {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  font-weight: 700;
   margin: 0;
 }
 
 .contador {
   background: linear-gradient(135deg, var(--roxo), var(--rosa));
   color: var(--branco);
-  font-weight: 800;
-  font-size: 0.9rem;
-  min-width: 30px;
-  height: 30px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  min-width: 32px;
+  height: 32px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 9px;
-  transition: transform 0.2s ease;
-}
-
-.contador.pulsa {
-  animation: pulsa 0.4s ease;
-}
-
-@keyframes pulsa {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.35); }
-  100% { transform: scale(1); }
+  padding: 0 10px;
 }
 
 .lista {
@@ -278,22 +360,26 @@ input[type="text"]:focus {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 13px;
-  border-radius: 14px;
+  gap: 14px;
+  padding: 15px;
+  border-radius: 16px;
   background: #faf8ff;
-  border: 2px solid #eee9f8;
+  border: 2px solid #f0ebf9;
+  transition: transform 0.12s ease, box-shadow 0.15s ease;
 }
 
-/* animação de entrada de um item novo: "pop" */
+.item:hover {
+  box-shadow: 0 6px 16px rgba(76, 29, 149, 0.1);
+}
+
 .item.novo {
-  animation: pop 0.45s cubic-bezier(0.22, 1.4, 0.5, 1);
+  animation: pop 0.5s cubic-bezier(0.22, 1.4, 0.5, 1);
 }
 
 @keyframes pop {
@@ -302,7 +388,6 @@ input[type="text"]:focus {
   100% { transform: scale(1); }
 }
 
-/* animação de saída ao remover */
 .item.saindo {
   animation: saindo 0.3s ease forwards;
 }
@@ -311,50 +396,46 @@ input[type="text"]:focus {
   to { opacity: 0; transform: translateX(40px) scale(0.9); height: 0; padding: 0; margin: 0; border-width: 0; }
 }
 
+.item-emoji {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 .item-info {
   flex: 1;
   min-width: 0;
 }
 
 .item-nome {
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 1.05rem;
   word-break: break-word;
 }
 
 .badge {
   display: inline-block;
   margin-top: 5px;
-  font-size: 0.75rem;
-  font-weight: 800;
-  padding: 3px 11px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 12px;
   border-radius: 999px;
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
 
-.badge-adulto {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.badge-estudante {
-  background: #dcfce7;
-  color: #15803d;
-}
-
-.badge-pcd {
-  background: #ffedd5;
-  color: #c2410c;
-}
+.badge-adulto { background: #dbeafe; color: #1d4ed8; }
+.badge-estudante { background: #dcfce7; color: #15803d; }
+.badge-pcd { background: #ffe8d9; color: #c2410c; }
 
 .btn-remover {
   background: transparent;
   color: var(--texto-fraco);
-  min-height: 42px;
-  min-width: 42px;
+  min-height: 44px;
+  min-width: 44px;
   padding: 0;
-  font-size: 1.2rem;
-  border-radius: 10px;
+  font-size: 1.25rem;
+  border-radius: 12px;
 }
 
 .btn-remover:hover {
@@ -365,7 +446,7 @@ input[type="text"]:focus {
 .vazio {
   text-align: center;
   color: var(--texto-fraco);
-  padding: 14px 0;
+  padding: 18px 0;
   margin: 0;
   font-weight: 600;
 }
@@ -376,15 +457,15 @@ input[type="text"]:focus {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 20px 0;
+  padding: 24px 0;
   color: var(--texto-fraco);
   font-weight: 600;
 }
 
 .spinner {
-  width: 22px;
-  height: 22px;
-  border: 3px solid #e6e0f0;
+  width: 24px;
+  height: 24px;
+  border: 3px solid #ece6f7;
   border-top-color: var(--roxo);
   border-radius: 50%;
   animation: girar 0.7s linear infinite;
@@ -394,7 +475,13 @@ input[type="text"]:focus {
   to { transform: rotate(360deg); }
 }
 
-/* Modal de confirmação */
+@keyframes pulsa {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+/* --- Modal ---------------------------------------------------------------- */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -415,8 +502,8 @@ input[type="text"]:focus {
 
 .modal {
   background: var(--branco);
-  border-radius: 20px;
-  padding: 24px 22px;
+  border-radius: 22px;
+  padding: 26px 24px;
   width: 100%;
   max-width: 360px;
   text-align: center;
@@ -430,25 +517,26 @@ input[type="text"]:focus {
 }
 
 .modal-icone {
-  font-size: 2.4rem;
+  font-size: 2.6rem;
   line-height: 1;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .modal-titulo {
-  margin: 0 0 6px;
-  font-size: 1.2rem;
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .modal-texto {
-  margin: 0 0 20px;
+  margin: 0 0 22px;
   color: var(--texto-fraco);
   word-break: break-word;
 }
 
 .modal-acoes {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .modal-acoes button {
@@ -469,7 +557,7 @@ input[type="text"]:focus {
   height: 14px;
   border-radius: 2px;
   pointer-events: none;
-  z-index: 999;
+  z-index: 1500;
   will-change: transform, opacity;
   animation: cair linear forwards;
 }
@@ -488,11 +576,9 @@ input[type="text"]:focus {
 }
 
 /* Telas maiores */
-@media (min-width: 600px) {
-  header h1 {
-    font-size: 2.2rem;
-  }
-  .card {
-    padding: 26px;
-  }
+@media (min-width: 560px) {
+  header h1 { font-size: 2.4rem; }
+  .subtitulo { font-size: 1.1rem; }
+  .placar { grid-template-columns: repeat(4, 1fr); }
+  .card { padding: 28px; }
 }
