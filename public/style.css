@@ -125,31 +125,30 @@ main {
 /* --- Painel de contadores por tipo ---------------------------------------- */
 .placar {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
 }
 
 .stat {
   background: var(--branco);
-  border-radius: 18px;
-  padding: 16px 12px;
+  border-radius: 14px;
+  padding: 10px 6px;
   text-align: center;
   box-shadow: var(--sombra);
-  border-top: 5px solid var(--roxo);
+  border-top: 4px solid var(--roxo);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  transition: transform 0.15s ease;
+  gap: 1px;
 }
 
 .stat-icone {
-  font-size: 1.7rem;
+  font-size: 1.15rem;
   line-height: 1;
 }
 
 .stat-num {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.1;
   color: var(--texto);
@@ -160,10 +159,10 @@ main {
 }
 
 .stat-label {
-  font-size: 0.82rem;
+  font-size: 0.62rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   color: var(--texto-fraco);
 }
 
@@ -579,6 +578,8 @@ input[type="text"]:focus {
 @media (min-width: 560px) {
   header h1 { font-size: 2.4rem; }
   .subtitulo { font-size: 1.1rem; }
-  .placar { grid-template-columns: repeat(4, 1fr); }
+  .stat-icone { font-size: 1.4rem; }
+  .stat-num { font-size: 1.8rem; }
+  .stat-label { font-size: 0.72rem; }
   .card { padding: 28px; }
 }
